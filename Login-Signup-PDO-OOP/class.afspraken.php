@@ -40,7 +40,7 @@ class AFSPRAAK
 		{
 		
 			
-			$stmt = $this->conn->prepare("INSERT INTO afspraken(user_name,user_birthday,user_email,user_phone,user_apodate,user_apotime,user_msg)
+			$stmt = $this->conn->prepare("INSERT INTO appointments(user_name,user_birthday,user_email,user_phone,user_apodate,user_apotime,user_msg)
 		                                               VALUES(:uname, :ubday, :umail, :uphone, :udatum, :utijd, :umsg)");
 
 			$stmt->bindparam(":uname", $uname);

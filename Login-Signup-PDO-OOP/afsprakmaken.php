@@ -19,22 +19,22 @@ if(isset($_POST['submit']))
    // delete this line: $test = $user->yearsMonthsBetween($ubday,date( 'Y-m-d' )); .
 
 	if($uname=="")	{
-		$error[] = "provide username !";	
+		$error[] = "Pls, provide a username !";	
 	}
     else if($ubday=="" || ( $user->yearsMonthsBetween($ubday,date( 'Y-m-d' ))  < 16 )  )	{
-		$error[] = "date must be like dd-mm-jjjj and you must be 16 years or older";	
+		$error[] = "date must be like dd-mm-yyyy and you must be 16 years or older";	
 	}
 	else if($umail=="")	{
-		$error[] = "provide an email";	
+		$error[] = "Pls, provide an email";	
 	}
 	else if(!filter_var($umail, FILTER_VALIDATE_EMAIL))	{
-	    $error[] = 'Please enter a valid email.';
+	    $error[] = 'Pls, enter a valid email.';
 	}
      else if($uphone=="" || strlen($uphone) < 10)	{
-		$error[] = "Please, provide a valid phone number & phone should be 10 alphanumeric caracters long";	
+		$error[] = "Pls, provide a valid phone number & number should be 10 character long";	
 	}
      else if($udatum=="")	{
-		$error[] = "Date must be like dd-mm-yy";	
+		$error[] = "Date must be like dd-mm-yyyy";	
 	}
 	else if($utijd=="")	{
 		$error[] = "Time is a required field";
@@ -46,11 +46,11 @@ if(isset($_POST['submit']))
 	{
 		try
 		{
-			$stmt = $user->runQuery("SELECT user_name, user_email FROM afspraken WHERE user_name=:uname OR user_email=:umail");
+			$stmt = $user->runQuery("SELECT user_name, user_email FROM appointments WHERE user_name=:uname OR user_email=:umail");
 			$stmt->execute(array(':uname'=>$uname, ':umail'=>$umail));
 			$row=$stmt->fetch(PDO::FETCH_ASSOC);
 				
-			if($row['user_name']==$uname) {
+			if($row['apo_name']==$uname) {
 				$error[] = "sorry " . $uname . " you allready have an upcoming <a href='afspraken.php'>appointment</a>";
 			}
 			else if($row['user_email']==$umail) {
@@ -83,6 +83,15 @@ if(isset($_POST['submit']))
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="../js/jquery-1.12.4-jquery.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+<script src="parsleyjs/dist/parsley.min.js"></script>
 </head>
 <body>
 
@@ -206,13 +215,7 @@ if(isset($_POST['submit']))
 
 											
 									
-<script src="../js/jquery-1.12.4-jquery.min.js"></script>
- <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
-<script src="bootstrap/js/bootstrap.min.js"></script>
 
-<script src="parsleyjs/dist/parsley.min.js"></script>
 	
 <script>
 $(document).ready(function(){
@@ -254,8 +257,6 @@ $(document).ready(function(){
   
 
     </script>
-
-<script src="bootstrap/js/bootstrap.min.js"></script>
 
 </body>
 </html>

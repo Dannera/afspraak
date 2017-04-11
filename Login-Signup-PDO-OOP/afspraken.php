@@ -10,9 +10,11 @@
 	        require_once("class.user.php");
          	$auth_user = new USER();
 	        $user_id = $_SESSION['user_session'];
+          
+
 //select users from db          
-	        $stmt = $auth_user->runQuery("SELECT * FROM users WHERE user_id=:user_id");
-	        $stmt->execute(array(":user_id"=>$user_id));
+	        $stmt = $auth_user->runQuery("SELECT * FROM users WHERE user_id=:user_id OR user_email=:apo_email");
+	        $stmt->execute(array(":user_id"=>$user_id, ":apo_email"=>$apo_email));
 	
 	$userRow=$stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -41,8 +43,8 @@
     <div class="container">
 <?php
 //select for user appointment data
-      $stmt = $userAfspraak->runQuery("SELECT * FROM appointments WHERE user_id=:user_id");
-      $stmt->execute(array(":user_id"=>$user_id));
+      $stmt = $userAfspraak->runQuery("SELECT * FROM appointments WHERE user_email=:user_email");
+      $stmt->execute(array(':user_email'=>$userRow['user_email']));
 	
 	    $afsprakenRow=$stmt->fetch(PDO::FETCH_ASSOC);
 
