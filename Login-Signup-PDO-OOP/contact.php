@@ -9,10 +9,7 @@
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
     <script type="text/javascript" src="jquery-1.11.3-jquery.min.js"></script>
-    <link rel="stylesheet" href="style.css" type="text/css"  />
-
-  
-
+    <link rel="stylesheet" href="css/style.css" type="text/css"  />
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDeopjvHjhKyGZAA06SuRNIyu90N0r7GPo&sensor=false">
     </script>
 
@@ -25,42 +22,84 @@
       var map;
 
 
-    //destination properties
-
-
-
-
-/*   == THE END == */
-    
+    //Initializer
       function initialize() {
-         directionsDisplay = new google.maps.DirectionsRenderer();
-         var renkum = new google.maps.LatLng(52.151292, 5.658739);
+       directionsDisplay = new google.maps.DirectionsRenderer();
+       var mapOptions = {
+         mapTypeId: google.maps.MapTypeId.ROADMAP,
+        }
+        map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
+        directionsDisplay.setMap(map);
+      }
 
-         //START
+  //HTML5 geolocation
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var pos = new google.maps.LatLng(position.coords.latitude,
+                                       position.coords.longitude);
 
- var bounds = new google.maps.LatLngBounds;
+      var infowindow = new google.maps.InfoWindow({
+        map: map,
+        position: pos,
+        content: 'Location found'
+      });
+
+document.getElementById("start").value = pos,
+calcRoute();
+      map.setCenter(pos);
+    }, function() {
+      handleNoGeolocation(true);
+    });
+  } else {
+    // Browser doesn't support Geolocation
+    handleNoGeolocation(false);
+  }
+
+//calculate distance
+  function calcRoute() {
+  var start = document.getElementById("start").value;
+  var selectedMode = document.getElementById("mode").value;
+      
+  var request = {
+    origin:start,
+    destination: new google.maps.LatLng(51.982983, 5.739978),
+    travelMode: google.maps.TravelMode[selectedMode]
+  };
+  directionsService.route(request, function(result, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(result);
+    }
+  });
+
+/////// =THE END= //////
+
+      //LatLngBounds
+        var bounds = new google.maps.LatLngBounds;
         var markersArray = [];
 
-        var origin1 = {lat: 52.151292, lng: 5.658739};
-        var origin2 = 'Arnhem, Holland';
-        var destinationA = 'Utrecht, Holland';
-        var destinationB = {lat: 51.985103, lng: 5.898730};
+        var originA = {lat: 51.982983, lng: 5.739978};
 
+        if(start === ''){
+        var destinationB = originA;
+        destinationB;
+        }else{
+          destinationB = start;
+        }
         var destinationIcon = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=D|999000|000000';
+            'chst=d_map_pin_letter&chld=A|00ff00|000000';
         var originIcon = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=O|00FF00|000000';
+            'chst=d_map_pin_letter&chld=B|ffa500|000000';
         var map = new google.maps.Map(document.getElementById('map_canvas'), {
-          center: renkum,
+          center: originA,
           zoom: 8
            });
         var geocoder = new google.maps.Geocoder;
 
          var service = new google.maps.DistanceMatrixService;
-        service.getDistanceMatrix({
-          origins: [origin1, origin2],
-          destinations: [destinationA, destinationB],
-          travelMode: 'DRIVING',
+          service.getDistanceMatrix({
+          origins: [originA],
+          destinations: [destinationB],
+          travelMode: selectedMode,
           unitSystem: google.maps.UnitSystem.METRIC,
           avoidHighways: false,
           avoidTolls: false
@@ -97,13 +136,16 @@
               for (var j = 0; j < results.length; j++) {
                 geocoder.geocode({'address': destinationList[j]},
                     showGeocodedAddressOnMap(true));
-                outputDiv.innerHTML += originList[i] + ' to ' + destinationList[j] +
-                    ': ' + results[j].distance.text + ' in ' +
+                outputDiv.innerHTML += 'From: ' + destinationList[j] + '<br> To: ' + originList[i] + '<br>Distance: ' + results[j].distance.text + '<br> Time: ' +
                     results[j].duration.text + '<br>';
               }
             }
           }
         });
+}
+
+   google.maps.event.addDomListener(window, 'load', initialize);
+         /* -- --- */
 
          function deleteMarkers(markersArray) {
         for (var i = 0; i < markersArray.length; i++) {
@@ -112,93 +154,11 @@
         markersArray = [];
       }
 
-         //END
-         var mapOptions = {
-         mapTypeId: google.maps.MapTypeId.ROADMAP,
-        }
-        map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
-        directionsDisplay.setMap(map);
-      }
-
       
-        
-  // Try HTML5 geolocation
-
-  if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var pos = new google.maps.LatLng(position.coords.latitude,
-                                       position.coords.longitude);
-
-      var infowindow = new google.maps.InfoWindow({
-        map: map,
-        position: pos,
-        content: 'Location found using HTML5.'
-      });
-
-document.getElementById("start").value = pos,
-calcRoute();
-      map.setCenter(pos);
-    }, function() {
-      handleNoGeolocation(true);
-    });
-  } else {
-    // Browser doesn't support Geolocation
-    handleNoGeolocation(false);
-  }
-
-  function calcRoute() {
-  var start = document.getElementById("start").value;
-  var selectedMode = document.getElementById("mode").value;
-      
-  var request = {
-    origin:start,
-    destination: new google.maps.LatLng(51.985103, 5.898730),
-    travelMode: google.maps.TravelMode[selectedMode]
-  };
-  directionsService.route(request, function(result, status) {
-    if (status == google.maps.DirectionsStatus.OK) {
-      directionsDisplay.setDirections(result);
-    }
-  });
-}
-        google.maps.event.addDomListener(window, 'load', initialize);
         
     </script>
 
-    
-<style>
-  #map_canvas {
-    box-shadow: 1px 16px 9px -12px #333;
-    height: 350px;
-    margin-bottom: 20px;
-    width: 100%;
-}
-.canvas_btm {
 
-background-repeat : no-repeat;
-height : 25px;
-width: 100%;
-}
-.direction {
-    float: right;
-    margin: auto auto 20px;
-    width: 590px;
-}
-.direction table {
-    border: 1px solid #000000;
-    float: right;
-    margin: 4px 0 10px auto;
-    width: 403px;
-}
-.direction table td input[type="text"] {
-color : #000;
-padding : 0;
-}
-
-.item-page p {
-    width: 271px;
-}
-</style>
 
   </head>
   <body>
@@ -227,9 +187,12 @@ padding : 0;
 </div></div>
 
  <div>
-        <strong>Results</strong>
+        <strong>Results in Time and KM and based on Methode of Travel:</strong>
       </div>
-      <div id="output"></div>
+
+      
+      <div id="output">
+      </div>
     </div>
 </div>
 
