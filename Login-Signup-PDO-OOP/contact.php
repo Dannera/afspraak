@@ -77,28 +77,23 @@ calcRoute();
         var bounds = new google.maps.LatLngBounds;
         var markersArray = [];
 
-        var originA = {lat: 51.982983, lng: 5.739978};
+        var renkum = {lat: 51.982983, lng: 5.739978};
 
-        if(start === ''){
-        var destinationB = originA;
-        destinationB;
-        }else{
-          destinationB = start;
-        }
+       
         var destinationIcon = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=A|00ff00|000000';
+            'chst=d_map_pin_letter&chld=B|00ff00|000000';
         var originIcon = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=B|ffa500|000000';
+            'chst=d_map_pin_letter&chld=A|ffa500|000000';
         var map = new google.maps.Map(document.getElementById('map_canvas'), {
-          center: originA,
+          center: renkum,
           zoom: 8
            });
         var geocoder = new google.maps.Geocoder;
 
          var service = new google.maps.DistanceMatrixService;
           service.getDistanceMatrix({
-          origins: [originA],
-          destinations: [destinationB],
+          origins: [start],
+          destinations: [renkum],
           travelMode: selectedMode,
           unitSystem: google.maps.UnitSystem.METRIC,
           avoidHighways: false,
@@ -136,7 +131,7 @@ calcRoute();
               for (var j = 0; j < results.length; j++) {
                 geocoder.geocode({'address': destinationList[j]},
                     showGeocodedAddressOnMap(true));
-                outputDiv.innerHTML += 'From: ' + destinationList[j] + '<br> To: ' + originList[i] + '<br>Distance: ' + results[j].distance.text + '<br> Time: ' +
+                outputDiv.innerHTML += 'From: ' + originList[i] + '<br> To: ' + destinationList[j] + '<br>Distance: ' + results[j].distance.text + '<br> Time: ' +
                     results[j].duration.text + '<br>';
               }
             }
