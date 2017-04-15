@@ -157,7 +157,7 @@ calcRoute();
 
   </head>
   <body>
-
+<?php require_once('message.php'); ?>
 <?php include('navbar.php'); ?>
 
   <div id="map_canvas"></div> 
@@ -165,24 +165,21 @@ calcRoute();
    
 <form role="form"><div class="col-lg-6">
 <div class="form-group">
-     <label for="InputName">Your address or location:</label>
+     <label for="InputName"><?php echo Message::LOCATION . ":"; ?></label>
      <input type="text" class="form-control" name="start"  id="start" placeholder="Enter your adres/city"  value=""  onchange="calcRoute()" />
       </div></div>
   <!--    <form role="form"></form> -->
 
 <div class="col-lg-6">
 <div class="form-group">
-<label for="InputName">Method of travel:</label>   
+<label for="InputName"><?php echo Message::TRAVELMETHOD . ":"; ?></label>   
 <select class="form-control" id="mode" onchange="calcRoute()">
-  <option value="DRIVING">Driving</option>
-  <option value="WALKING">Walking</option>
-  <option value="BICYCLING">Bicycling</option>
-  <option value="TRANSIT">Transit</option>
+<?php  Message::travelOptions(); ?>
 </select>
 </div></div>
 
  <div>
-        <strong>Results in Time and KM and based on Methode of Travel:</strong>
+        <strong><?php echo Message::CALC_TRAVELMETHOD_MSG . ":"; ?>:</strong>
       </div>
 
       

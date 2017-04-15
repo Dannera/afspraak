@@ -12,9 +12,9 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="home.php"> <span class="glyphicon glyphicon-home"></span>Home</a></li>
-                <li><a href="profile.php"><span class="glyphicon glyphicon-user"></span>&nbsp;View Profile</a></li>
+                <li><a href="profile.php"><span class="glyphicon glyphicon-user"></span>&nbsp; Profile</a></li>
                 
-                 <li><a href="contact.php" target="_self">Contact us</a></li>
+                 <li><a href="contact.php" target="_self">Contact</a></li>
               </ul>
             </li>
             <ul>
