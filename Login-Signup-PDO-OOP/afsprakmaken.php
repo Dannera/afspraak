@@ -1,9 +1,23 @@
 <?php
 session_start();
+//require_once("session.php");
 require_once('class.afspraken.php');
 require_once('class.user.php');
-$user = new AFSPRAAK();
-$userRedirect = new USER();
+require_once('message.php');
+
+    $userAfspraak = new AFSPRAAK();
+    $user = new USER();
+
+	$user_id = $_SESSION['user_session'];
+	//get users from db
+	$stmt = $user->runQuery("SELECT * FROM users WHERE user_id=:user_id");
+	$stmt->execute(array(":user_id"=>$user_id));
+	
+	$userRow=$stmt->fetch(PDO::FETCH_ASSOC);
+
+//          ==/ THE-END /==   
+
+
 
 //collect user inputs
 if(isset($_POST['submit']))
@@ -19,47 +33,40 @@ if(isset($_POST['submit']))
    // delete this line: $test = $user->yearsMonthsBetween($ubday,date( 'Y-m-d' )); .
 
 	if($uname=="")	{
-		$error[] = "Pls, provide a username !";	
+		$error[] = message::USERNAME_ERROR;	
 	}
-    else if($ubday=="" || ( $user->yearsMonthsBetween($ubday,date( 'Y-m-d' ))  < 16 )  )	{
-		$error[] = "date must be like dd-mm-yyyy and you must be 16 years or older";	
-	}
+    else if($ubday=="" || ( $userAfspraak->yearsMonthsBetween($ubday,date( 'Y-m-d' ))  < 16 )  )	{
+		$error[] = message::BDAY_ERROR;	}
 	else if($umail=="")	{
-		$error[] = "Pls, provide an email";	
-	}
+		$error[] = MESSAGE::USER_EMAIL_ERROR ;	}
 	else if(!filter_var($umail, FILTER_VALIDATE_EMAIL))	{
-	    $error[] = 'Pls, enter a valid email.';
-	}
+	    $error[] = MESSAGE::USER_EMAIL_ERROR ; }
      else if($uphone=="" || strlen($uphone) < 10)	{
-		$error[] = "Pls, provide a valid phone number & number should be 10 character long";	
-	}
+		$error[] = message::USER_PHONE_ERROR; }
      else if($udatum=="")	{
-		$error[] = "Date must be like dd-mm-yyyy";	
-	}
+		$error[] = message::APO_DATE_ERROR;	}
 	else if($utijd=="")	{
-		$error[] = "Time is a required field";
-	}
+		$error[] = message::APO_TIME_ERROR;}
 	else if($umsg==""){
-		$error[] = "Message is required";	
-	}
+		$error[] = message::USER_MSG_ERROR;	}
 	else
 	{
 		try
 		{
-			$stmt = $user->runQuery("SELECT user_name, user_email FROM appointments WHERE user_name=:uname OR user_email=:umail");
+			$stmt = $userAfspraak->runQuery("SELECT user_name, user_email FROM appointments WHERE user_name=:uname OR user_email=:umail");
 			$stmt->execute(array(':uname'=>$uname, ':umail'=>$umail));
 			$row=$stmt->fetch(PDO::FETCH_ASSOC);
 				
-			if($row['apo_name']==$uname) {
-				$error[] = "sorry " . $uname . " you allready have an upcoming <a href='afspraken.php'>appointment</a>";
+			if($row['user_name']==$uname) {
+				$error[] = $uname . ', ' . message::APO_NAME_EXIST_ERROR . ", <a href='afspraken.php'>appointment</a>";
 			}
 			else if($row['user_email']==$umail) {
-				$error[] = "There is already an open appointment referring to your " . $umail . " address.";
+				$error[] = message::APO_EMAIL_EXIST_ERROR . ' ' . $umail . " <a href='afspraken.php'>appointment</a>";
 			}
 			else
 			{
-				if($user->register($uname, $ubday, $umail, $uphone, $udatum, $utijd, $umsg)){
-					$userRedirect->redirect('afspraken.php');
+				if($userAfspraak->register($user_id, $uname, $ubday, $umail, $uphone, $udatum, $utijd, $umsg)){
+					$user->redirect('afspraken.php');
 				}
 			}
 		}
@@ -86,9 +93,9 @@ if(isset($_POST['submit']))
 
 <script src="bootstrap/js/bootstrap.min.js"></script>
 <script src="../js/jquery-1.12.4-jquery.min.js"></script>
- <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>
 
 <script src="parsleyjs/dist/parsley.min.js"></script>
@@ -129,111 +136,70 @@ if(isset($_POST['submit']))
 			?>
        
   
-   
-       
-           
-            <?php
-			//validation step
-			if(isset($error) && empty($error))
-			{
-			 	foreach($error as $error)
-			 	{
-					 ?>
+<?php
+     //validation step
+			if(isset($error) && empty($error)){ foreach($error as $error) { ?>
                      <div class="alert alert-danger">
-                        <i class="glyphicon glyphicon-warning-sign"></i> &nbsp; <?php echo "Error: " . $error; ?>
-                     </div>
-                     <?php
-				}
-			}
-			else if(isset($_GET['submit']))
-			{
-				 ?>
+                        <i class="glyphicon glyphicon-warning-sign"></i> &nbsp; 
+						<?php echo "Error: " . $error; ?> </div>
+<?php } } else if(isset($_GET['submit'])){ ?>
                  <div class="alert alert-info">
                       <i class="glyphicon glyphicon-log-in"></i> &nbsp; Done! </div>
-                 <?php
-			}
-
-			//          ==/ THE-END /==  
-			?>
+<?php }
+			//          ==/ THE-END /==  ?>
 
 					<div class="form-group">
-					
 					Naam:<input type="text" name="txt_uname" class="form-control"  placeholder="uw naam" value="<?php if(isset($error)){echo $uname;}?>"/>
-					
 					</div>
 												
 					<div class="form-group">
-			
 					Geboortedatum:<input type="date" name="txt_ubday" class="form-control geboortedatum" formated="true" placeholder="uw geboortedatum" value="<?php if(isset($error)){echo $ubday;}?>"/>
-					
 					</div>						
 												
 					<div class="form-group">
-				
 					E-Mail:<input type="email" name="txt_umail" class="form-control" data-parsley-trigger="keyup" placeholder="Enter a valid e-mail" value="<?php if(isset($error)){echo $umail;}?>"/>
-					
 					</div>
 					
 					<div class="form-group">
-				
-					Telefoonnummer:<input type="text" name="txt_uphone" class="form-control"  placeholder="uw telefoonnummer" value="<?php if(isset($error)){echo $uphone;}?>"/>
-					
+					Telefoonnummer:<input type="text" name="txt_uphone" class="form-control"  placeholder="uw telefoonnummer" value="<?php if(isset($error)){echo $uphone;}?>"/>	
 					</div>
 					
 	                <div class="form-group">
-		
 					Datum voor afspraak:<input type="date" name="txt_udatum" class="form-control datum" placeholder="datum voor afspraak" value="<?php if(isset($error)){echo $udatum;}?>"/>
-				
 					</div>
 
 					<div class="form-group">
-
 					Tijd voor afspraak:<input type="text" name="txt_tijd" class="form-control timepicker"  placeholder="tijd voor afspraak" value="<?php if(isset($error)){echo $utijd;}?>"/>
                     <span class="help-line">...</span>
-				
 					</div>
 					
 					<div class="form-group">
-			
 					Uw boodschap:<textarea required name="txt_umsg" class="form-control" value="<?php if(isset($error)){echo $umsg;}?>"></textarea>
-					
 					</div>
 					
 					<div class="form-group">
-					
 					<button type="submit" class="btn btn-primary" name="submit">Maak afspraak</button>
 					<button type="reset" class="btn btn-default m-l-5">Cancel</button>
 					</div>
-		
-					
-			
+
 				</form>
 			 </div>
 </div>
 </div>
 
-
-											
-									
-
-	
 <script>
 $(document).ready(function(){
 	//$('form').parsley();
 });
 </script>
 
-  <script>
-  $( function() {  
-    $( ".geboortedatum" ).datepicker(
-        {
-            changeMonth:true, 
+  <script> $( function() {  
+           $( ".geboortedatum" ).datepicker( {
+             changeMonth:true, 
              changeYear:true,        
-            dateFormat:"yy-mm-dd",
-        });
+             dateFormat:"yy-mm-dd", });
 
-      $( ".datum" ).datepicker(
-        {
+      $( ".datum" ).datepicker({
             changeMonth:true,
             changeYear:true,           
             dateFormat:"yy-mm-dd",
@@ -252,10 +218,7 @@ $(document).ready(function(){
     dynamic: false,
     dropdown: true,
     scrollbar: true
-  } );
-
-  
-
+    } );
     </script>
 
 </body>

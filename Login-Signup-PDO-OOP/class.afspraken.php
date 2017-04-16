@@ -34,15 +34,16 @@ class AFSPRAAK
         }
 
 	
-	public function register($uname, $ubday, $umail, $uphone, $udatum, $utijd, $umsg)
+	public function register($user_id, $uname, $ubday, $umail, $uphone, $udatum, $utijd, $umsg)
 	{
 		try
 		{
 		
 			
-			$stmt = $this->conn->prepare("INSERT INTO appointments(user_name,user_birthday,user_email,user_phone,user_apodate,user_apotime,user_msg)
-		                                               VALUES(:uname, :ubday, :umail, :uphone, :udatum, :utijd, :umsg)");
-
+			$stmt = $this->conn->prepare("INSERT INTO appointments(session_id, user_name,user_birthday,user_email,user_phone,user_apodate,user_apotime,user_msg)
+		                                               VALUES(:session_id, :uname, :ubday, :umail, :uphone, :udatum, :utijd, :umsg)");
+            
+			$stmt->bindparam(":session_id", $user_id);
 			$stmt->bindparam(":uname", $uname);
 			$stmt->bindparam(":ubday", $ubday);
             $stmt->bindparam(":umail", $umail);

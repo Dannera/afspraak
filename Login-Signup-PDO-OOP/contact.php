@@ -174,7 +174,7 @@ calcRoute();
 <div class="form-group">
 <label for="InputName"><?php echo Message::TRAVELMETHOD . ":"; ?></label>   
 <select class="form-control" id="mode" onchange="calcRoute()">
-<?php  Message::travelOptions(); ?>
+<?php echo  Message::travelOptions(); ?>
 </select>
 </div></div>
 
