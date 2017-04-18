@@ -23,19 +23,20 @@ $user = new AFSPRAAK();
 	        $stmt->execute(array(":user_id"=>$user_id));
 	
 	$userRow=$stmt->fetch(PDO::FETCH_ASSOC);
+
   $user = new AFSPRAAK();
   $userRedirect = new USER();
 
 //collect user inputs
 if(isset($_POST['submit']))
 {
-	$uname  =  strip_tags($_POST['txt_uname']);
+  $uname  =  strip_tags($_POST['txt_uname']);
   $ubday  =  strip_tags($_POST['txt_ubday']);
-	$umail  =  strip_tags($_POST['txt_umail']);
-	$uphone =  strip_tags($_POST['txt_uphone']);
+  $umail  =  strip_tags($_POST['txt_umail']);
+  $uphone =  strip_tags($_POST['txt_uphone']);
   $udatum =  strip_tags($_POST['txt_udatum']);
-	$utijd  =  strip_tags($_POST['txt_tijd']);
-	$umsg   =  strip_tags($_POST['txt_umsg']);	
+  $utijd  =  strip_tags($_POST['txt_tijd']);
+  $umsg   =  strip_tags($_POST['txt_umsg']);	
 
    // delete this line: $test = $user->yearsMonthsBetween($ubday,date( 'Y-m-d' )); .
 
@@ -51,7 +52,7 @@ if(isset($_POST['submit']))
 	else if(!filter_var($umail, FILTER_VALIDATE_EMAIL))	{
 	    $error[] = MESSAGE::USER_EMAIL_ERROR ;
 	}
-     else if($uphone=="" || strlen($uphone) < 10)	{
+     else if($uphone=="" || strlen($uphone) < MESSAGE::PHONE_NUMBER_MAX_LENGTH)	{
 		$error[] = message::USER_PHONE_ERROR;	
 	}
      else if($udatum=="")	{
@@ -67,13 +68,21 @@ if(isset($_POST['submit']))
 	{
 		try
 		{
-			$stmt = $user->runQuery("SELECT user_name, user_email FROM appointments WHERE user_name=:uname OR user_email=:umail");
-			$stmt->execute(array(':uname'=>$uname, ':umail'=>$umail));
+			$stmt = $userAfspraak->runQuery("SELECT * FROM appointments WHERE session_id=$user_id");
+			$stmt->execute(array(':session_id'=>$user_id));
 			$row=$stmt->fetch(PDO::FETCH_ASSOC);
+				
+			if($row['session_id']!=$user_id) {
+				$error[] = $uname . ', ' . message::APO_NAME_EXIST_ERROR . ", <a href='afspraken.php'>appointment</a>";
+			}
 			
-      		$userRedirect->redirect('afspraken.php');
+			else
+			{
+				if($userAfspraak->updateAppointments($apo_id=$row['apo_id'], $uname, $ubday, $umail, $uphone,  $udatum, $utijd, $umsg)){
+					//$user->redirect('afspraken.php');
 				}
-
+			}
+		}
 		catch(PDOException $e)
 		{
 			echo $e->getMessage();
@@ -82,7 +91,7 @@ if(isset($_POST['submit']))
      
 	}	
 }
-//          ==/ THE-END /==  
+// ==/ THE-END /==  
 
 ?>
 
@@ -101,18 +110,14 @@ if(isset($_POST['submit']))
 
 <?php include('navbar.php'); ?>
 
-	
     <div class="container" style="margin-top:80px;">
-	
-   
+
 <?php
 //select for user appointment data
-      $stmt = $userAfspraak->runQuery("SELECT * FROM appointments WHERE user_email=:user_email");
-      $stmt->execute(array(':user_email'=>$userRow['user_email']));
-	
-	    $afsprakenRow=$stmt->fetch(PDO::FETCH_ASSOC);
-
-//                  ==/THE-END/==
+      $stmt = $userAfspraak->runQuery("SELECT * FROM appointments WHERE session_id=$user_id");
+      $stmt->execute(array(':session_id'=>$user_id));
+	  $afsprakenRow=$stmt->fetch(PDO::FETCH_ASSOC);
+// ==/THE-END/==
 ?> 
 
 
@@ -124,11 +129,8 @@ if(isset($_POST['submit']))
             <h2 class="form-signin-heading">Afspraak aanpasse:</h2><hr />
             <?php
 			//error and validation messages will appear here if exists
-			if(isset($error))
-			{
-			 	foreach($error as $error)
-			 	{
-					 ?>
+			if(isset($error)){ foreach($error as $error)
+			 	{ ?>
                      <div class="alert alert-danger">
                         <i class="glyphicon glyphicon-warning-sign"></i> &nbsp; <?php echo $error; ?>
                      </div>
@@ -145,27 +147,17 @@ if(isset($_POST['submit']))
 			}
 
 			//          ==/ THE-END /==  
-			?>
+	?>
        
-  
-   
-       
-           
             <?php
 			//validation step
 			if(isset($error) && empty($error))
-			{
-			 	foreach($error as $error)
-			 	{
-					 ?>
+			{	foreach($error as $error)
+			 	{ ?>
                      <div class="alert alert-danger">
                         <i class="glyphicon glyphicon-warning-sign"></i> &nbsp; <?php echo "Error: " . $error; ?>
                      </div>
-                     <?php
-				}
-			}
-			else if(isset($_GET['submit']))
-			{
+                     <?php } } else if(isset($_GET['submit'])) {
 				 ?>
                  <div class="alert alert-info">
                       <i class="glyphicon glyphicon-log-in"></i> &nbsp; Done! </div>
@@ -173,48 +165,8 @@ if(isset($_POST['submit']))
 			}
 
 			//          ==/ THE-END /==  
-			?>
+	?>
 
-
-<?php
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "afspraak";
-
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-
-
-  $uname  =  $afsprakenRow['user_name'];
-  $ubday  =  $afsprakenRow['user_birthday'];
-	$umail  =  $afsprakenRow['user_email'];
-	$uphone =  $afsprakenRow['user_phone'];
-  $udatum =  $afsprakenRow['user_apodate'];
-	$utijd  =  $afsprakenRow['user_apotime'];
-	$umsg   =  $afsprakenRow['user_msg'];
- 
-  
-  $sqll  = 'UPDATE appointments SET user_name=$uname, user_birthday=$udatum, user_email=$umail, user_phone=$uphone, user_apodate=$utijd, user_msg=$umsg  WHERE apo_id=10';
-
-    // Prepare statement
-    $stmt = $conn->prepare($sqll);
-
-    // execute the query
-    $stmt->execute();
-
-    // echo a message to say the UPDATE succeeded
-    echo $stmt->rowCount() . " records UPDATED successfully";
-    }
-catch(PDOException $e)
-    {
-    echo $sqll . "<br>" . $e->getMessage();
-    }
-
-?>
 
 				<div class="form-group">
 					Naam:<input type="text" name="txt_uname" class="form-control"  placeholder="uw naam" value="<?php if(isset($error)){echo $uname;} else {print($afsprakenRow['user_name']); } ?>"/>
@@ -232,7 +184,7 @@ catch(PDOException $e)
 					Telefoonnummer:<input type="text" name="txt_uphone" class="form-control"  placeholder="uw telefoonnummer" value="<?php if(isset($error)){echo $uphone;} else { print($afsprakenRow['user_phone']);  }?>"/>
 					</div>
 					
-	        <div class="form-group">
+	           <div class="form-group">
 					Datum voor afspraak:<input type="date" name="txt_udatum" class="form-control datum" placeholder="Datum voor afspraak" value="<?php if(isset($error)){echo $udatum;} else { print($afsprakenRow['user_apodate']); }?>"/>
 					</div>
 

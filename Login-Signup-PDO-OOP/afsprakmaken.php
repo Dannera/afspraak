@@ -41,7 +41,7 @@ if(isset($_POST['submit']))
 		$error[] = MESSAGE::USER_EMAIL_ERROR ;	}
 	else if(!filter_var($umail, FILTER_VALIDATE_EMAIL))	{
 	    $error[] = MESSAGE::USER_EMAIL_ERROR ; }
-     else if($uphone=="" || strlen($uphone) < 10)	{
+     else if($uphone=="" || strlen($uphone) < MESSAGE::PHONE_NUMBER_MAX_LENGTH)	{
 		$error[] = message::USER_PHONE_ERROR; }
      else if($udatum=="")	{
 		$error[] = message::APO_DATE_ERROR;	}

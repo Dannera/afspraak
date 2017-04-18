@@ -1,7 +1,7 @@
 <?php
 
 class Message{
-//messages
+//ERROR messages
   const USERNAME_ERROR = 'Pls, provide a username!';
   const BDAY_ERROR = 'date must be like dd-mm-yyyy and you must be 16 years or older';
   const USER_EMAIL_ERROR = 'Pls, provide an email';
@@ -12,7 +12,8 @@ class Message{
   const APO_NAME_EXIST_ERROR = 'you allready have an upcoming';
   const APO_EMAIL_EXIST_ERROR = 'There is already an open appointment referring to your';
 
-
+//
+  const PHONE_NUMBER_MAX_LENGTH = 10;
   const LOCATION = 'Huidige locatie'; 
   const TRAVELMETHOD = 'Reis methode';
   const CALC_TRAVELMETHOD_MSG = 'Deze resultaten zijn berekend op basis van door uw gekozen reis methode';

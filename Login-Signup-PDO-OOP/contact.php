@@ -20,6 +20,7 @@
       var directionsDisplay;
       var directionsService = new google.maps.DirectionsService();
       var map;
+      var renkum = {lat: 51.982983, lng: 5.739978};
 
 
     //Initializer
@@ -62,7 +63,7 @@ calcRoute();
       
   var request = {
     origin:start,
-    destination: new google.maps.LatLng(51.982983, 5.739978),
+    destination: renkum, //new google.maps.LatLng(51.982983, 5.739978)
     travelMode: google.maps.TravelMode[selectedMode]
   };
   directionsService.route(request, function(result, status) {
@@ -77,9 +78,6 @@ calcRoute();
         var bounds = new google.maps.LatLngBounds;
         var markersArray = [];
 
-        var renkum = {lat: 51.982983, lng: 5.739978};
-
-       
         var destinationIcon = 'https://chart.googleapis.com/chart?' +
             'chst=d_map_pin_letter&chld=B|00ff00|000000';
         var originIcon = 'https://chart.googleapis.com/chart?' +
@@ -123,35 +121,46 @@ calcRoute();
                 }
               };
             };
+//outputs localization
+  function switch2NL(){
+           var resisMethose_txt;
+           switch(document.getElementById("mode").value){
+           case "DRIVING":resisMethose_txt = "Auto"; 
+           break;
+           case "WALKING":resisMethose_txt = "Lopen";
+           break;
+           case "BICYCLING":resisMethose_txt = "Fietsen";
+           break;
+           case "TRANSIT":resisMethose_txt = "OV";
+           break;
+           default:resisMethose_txt = "Auto";
+          }
+   return resisMethose_txt;
+  }
 
-            for (var i = 0; i < originList.length; i++) {
+for (var i = 0; i < originList.length; i++) {
               var results = response.rows[i].elements;
               geocoder.geocode({'address': originList[i]},
                   showGeocodedAddressOnMap(false));
               for (var j = 0; j < results.length; j++) {
                 geocoder.geocode({'address': destinationList[j]},
                     showGeocodedAddressOnMap(true));
-                outputDiv.innerHTML += 'From: ' + originList[i] + '<br> To: ' + destinationList[j] + '<br>Distance: ' + results[j].distance.text + '<br> Time: ' +
-                    results[j].duration.text + '<br>';
+                outputDiv.innerHTML += 'Van: ' + originList[i] + '<br> Naar: ' + destinationList[j] + '<br>Afstand: ' + results[j].distance.text + '<br> Tijd: ' +
+                    results[j].duration.text + '<br>' + 'Reis methode: ' + switch2NL();
               }
             }
           }
-        });
+   });
 }
 
-   google.maps.event.addDomListener(window, 'load', initialize);
-         /* -- --- */
-
+google.maps.event.addDomListener(window, 'load', initialize);
          function deleteMarkers(markersArray) {
         for (var i = 0; i < markersArray.length; i++) {
           markersArray[i].setMap(null);
         }
         markersArray = [];
-      }
-
-      
-        
-    </script>
+ }        
+ </script>
 
 
 
@@ -181,10 +190,9 @@ calcRoute();
  <div>
         <strong><?php echo Message::CALC_TRAVELMETHOD_MSG . ":"; ?>:</strong>
       </div>
-
-      
       <div id="output">
       </div>
+     
     </div>
 </div>
 

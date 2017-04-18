@@ -1,7 +1,6 @@
 <?php
 require_once('dbconfig.php');
 
-
 class AFSPRAAK
 {	
 	private $conn;
@@ -55,6 +54,41 @@ class AFSPRAAK
         							  		        
      return $stmt; 
     }
+
+	 catch(PDOException $e)
+       {
+           
+          echo '<pre>'; 
+          echo 'Regel: '.$e->getLine().'<br>'; 
+          echo 'Bestand: '.$e->getFile().'<br>'; 
+          echo 'Foutmelding: '.$e->getMessage(); 
+          echo '</pre>'; 
+       }   
+    }
+
+
+	public function updateAppointments($apo_id, $uname, $ubday, $umail, $uphone,  $udatum, $utijd, $umsg)
+	{
+		
+		try
+		{
+			$sqlUpdate = "UPDATE appointments SET user_name='$uname', user_birthday='$ubday', user_email='$umail', user_phone='$uphone', user_apodate='$udatum', user_apotime='$utijd', user_msg='$umsg'  WHERE apo_id='$apo_id'";
+			
+			$stmt = $this->conn->prepare($sqlUpdate);
+
+			$stmt->bindparam(":uname", $uname);
+			$stmt->bindparam(":ubday", $ubday);
+            $stmt->bindparam(":umail", $umail);
+            $stmt->bindparam(":uphone", $uphone);
+            $stmt->bindparam(":udatum", $udatum);
+			$stmt->bindparam(":utijd", $utijd);
+			$stmt->bindparam(":umsg", $umsg);
+            
+			
+            $stmt->execute();	
+        							  		        
+     return $stmt; 
+    }
        
        catch(PDOException $e)
        {
@@ -66,5 +100,6 @@ class AFSPRAAK
           echo '</pre>'; 
        }    
     }
+
 }
 ?>
