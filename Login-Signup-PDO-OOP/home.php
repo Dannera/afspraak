@@ -16,12 +16,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
-<!-- <script type="text/javascript" src="jquery-1.11.3-jquery.min.js"></script> -->
-<link rel="stylesheet" href="style.css" type="text/css"  />
-
+<?php include('links.php'); ?>
 <title>welcome - <?php print($userRow['user_email']); ?></title>
 </head>
 
@@ -34,11 +29,13 @@
 	
     <div class="container">
     
+	
     	<label class="h5">welcome : <?php print($userRow['user_name']); ?></label>
         <hr />
-        <p class="h4"> <a href="afspraken.php" target="_self"> - heeft u al een afspraak gemaakt? </a></p>
-		 <p class="h4"> <a href="afsprakmaken.php" target="_self"> - Maak een nieuwe Afspraak:</a></p>   
+        <p class="h4"> <a href="getAppointments.php" target="_self"> - heeft u al een afspraak gemaakt? </a></p>
+		 <p class="h4"> <a href="addAppointments.php" target="_self"> - Maak een nieuwe Afspraak:</a></p>   
     </div>
 </div>
+
 </body>
 </html>

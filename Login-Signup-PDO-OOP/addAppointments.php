@@ -1,11 +1,11 @@
 <?php
 session_start();
 //require_once("session.php");
-require_once('class.afspraken.php');
+require_once('class.appointments.php');
 require_once('class.user.php');
 require_once('message.php');
 
-    $userAfspraak = new AFSPRAAK();
+    $userAppointment = new APPOINTMENT();
     $user = new USER();
 
 	$user_id = $_SESSION['user_session'];
@@ -14,10 +14,6 @@ require_once('message.php');
 	$stmt->execute(array(":user_id"=>$user_id));
 	
 	$userRow=$stmt->fetch(PDO::FETCH_ASSOC);
-
-//          ==/ THE-END /==   
-
-
 
 //collect user inputs
 if(isset($_POST['submit']))
@@ -33,40 +29,40 @@ if(isset($_POST['submit']))
    // delete this line: $test = $user->yearsMonthsBetween($ubday,date( 'Y-m-d' )); .
 
 	if($uname=="")	{
-		$error[] = message::USERNAME_ERROR;	
+		$error[] = MESSAGE::USERNAME_ERROR;	
 	}
-    else if($ubday=="" || ( $userAfspraak->yearsMonthsBetween($ubday,date( 'Y-m-d' ))  < 16 )  )	{
-		$error[] = message::BDAY_ERROR;	}
+    else if($ubday=="" || ( $userAppointment->yearsMonthsBetween($ubday,date( 'Y-m-d' ))   < MESSAGE::AGE_MIN )  )	{
+		$error[] = MESSAGE::BDAY_ERROR;	}
 	else if($umail=="")	{
 		$error[] = MESSAGE::USER_EMAIL_ERROR ;	}
 	else if(!filter_var($umail, FILTER_VALIDATE_EMAIL))	{
 	    $error[] = MESSAGE::USER_EMAIL_ERROR ; }
      else if($uphone=="" || strlen($uphone) < MESSAGE::PHONE_NUMBER_MAX_LENGTH)	{
-		$error[] = message::USER_PHONE_ERROR; }
+		$error[] = MESSAGE::USER_PHONE_ERROR; }
      else if($udatum=="")	{
-		$error[] = message::APO_DATE_ERROR;	}
+		$error[] = MESSAGE::APO_DATE_ERROR;	}
 	else if($utijd=="")	{
-		$error[] = message::APO_TIME_ERROR;}
+		$error[] = MESSAGE::APO_TIME_ERROR;}
 	else if($umsg==""){
-		$error[] = message::USER_MSG_ERROR;	}
+		$error[] = MESSAGE::USER_MSG_ERROR;	}
 	else
 	{
 		try
 		{
-			$stmt = $userAfspraak->runQuery("SELECT user_name, user_email FROM appointments WHERE user_name=:uname OR user_email=:umail");
+			$stmt = $userAppointment->runQuery("SELECT user_name, user_email FROM appointments WHERE user_name=:uname OR user_email=:umail");
 			$stmt->execute(array(':uname'=>$uname, ':umail'=>$umail));
 			$row=$stmt->fetch(PDO::FETCH_ASSOC);
 				
 			if($row['user_name']==$uname) {
-				$error[] = $uname . ', ' . message::APO_NAME_EXIST_ERROR . ", <a href='afspraken.php'>appointment</a>";
+				$error[] = $uname . ', ' . message::APO_NAME_EXIST_ERROR . ", <a href='appointments.php'>appointment</a>";
 			}
 			else if($row['user_email']==$umail) {
-				$error[] = message::APO_EMAIL_EXIST_ERROR . ' ' . $umail . " <a href='afspraken.php'>appointment</a>";
+				$error[] = message::APO_EMAIL_EXIST_ERROR . ' ' . $umail . " <a href='appointments.php'>appointment</a>";
 			}
 			else
 			{
-				if($userAfspraak->register($user_id, $uname, $ubday, $umail, $uphone, $udatum, $utijd, $umsg)){
-					$user->redirect('afspraken.php');
+				if($userAppointment->register($user_id, $uname, $ubday, $umail, $uphone, $udatum, $utijd, $umsg)){
+					$user->redirect('index.php');
 				}
 			}
 		}
@@ -82,23 +78,9 @@ if(isset($_POST['submit']))
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<?php include('links.php'); ?>
 <title>Afspraak Maken</title>
-<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
-<link rel="stylesheet" href="style.css" type="text/css"  />
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
-
-<script src="bootstrap/js/bootstrap.min.js"></script>
-<script src="../js/jquery-1.12.4-jquery.min.js"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
-<script src="bootstrap/js/bootstrap.min.js"></script>
-
-<script src="parsleyjs/dist/parsley.min.js"></script>
 </head>
 <body>
 
@@ -178,7 +160,7 @@ if(isset($_POST['submit']))
 					</div>
 					
 					<div class="form-group">
-					<button type="submit" class="btn btn-primary" name="submit">Maak afspraak</button>
+					<button type="submit" class="btn btn-primary" name="submit">Maak een afspraak</button>
 					<button type="reset" class="btn btn-default m-l-5">Cancel</button>
 					</div>
 

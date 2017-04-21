@@ -1,23 +1,17 @@
 -- phpMyAdmin SQL Dump
--- version 4.1.14
--- http://www.phpmyadmin.net
+-- version 4.6.5.2
+-- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jan 07, 2016 at 03:05 AM
--- Server version: 5.6.17
--- PHP Version: 5.5.12
+-- Host: localhost:8889
+-- Generation Time: Apr 21, 2017 at 09:40 PM
+-- Server version: 5.6.35
+-- PHP Version: 7.0.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
 --
--- Database: `dblogin`
+-- Database: `afspraak`
 --
 
 -- --------------------------------------------------------
@@ -26,16 +20,32 @@ SET time_zone = "+00:00";
 -- Table structure for table `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users` (
+  `user_id` int(11) NOT NULL,
   `user_name` varchar(15) NOT NULL,
-  `user_age` DATE NOT NULL,
+  `user_age` date NOT NULL,
   `user_email` varchar(40) NOT NULL,
   `user_pass` varchar(255) NOT NULL,
-  `joining_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  `joining_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`user_id`),
+  ADD KEY `user_email` (`user_email`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;

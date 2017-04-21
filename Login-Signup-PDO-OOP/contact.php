@@ -1,15 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- This stylesheet contains specific styles for displaying the map
-         on this page. Replace it with your own styles as described in the
-         documentation:
-         https://developers.google.com/maps/documentation/javascript/tutorial -->
-    <link rel="stylesheet" href="/maps/documentation/javascript/demos/demos.css">
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
-    <script type="text/javascript" src="jquery-1.11.3-jquery.min.js"></script>
-    <link rel="stylesheet" href="css/style.css" type="text/css"  />
+  <?php include('links.php'); ?>
+    
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDeopjvHjhKyGZAA06SuRNIyu90N0r7GPo&sensor=false">
     </script>
 
@@ -161,8 +154,6 @@ google.maps.event.addDomListener(window, 'load', initialize);
         markersArray = [];
  }        
  </script>
-
-
 
   </head>
   <body>

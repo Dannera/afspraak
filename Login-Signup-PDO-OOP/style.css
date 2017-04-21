@@ -127,3 +127,14 @@ padding : 0;
     width: 271px;
 }
 /* =THE END=  */
+
+/*Lazy fixes*/
+.MasterSpacer{
+    margin-top:73px;
+    width:100%;
+    height:50%;
+    border:solid 1px red;
+    clear: both;
+    display:block;
+}
+/*The END*/

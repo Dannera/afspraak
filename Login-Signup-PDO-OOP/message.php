@@ -13,6 +13,7 @@ class Message{
   const APO_EMAIL_EXIST_ERROR = 'There is already an open appointment referring to your';
 
 //
+  const AGE_MIN = 16;
   const PHONE_NUMBER_MAX_LENGTH = 10;
   const LOCATION = 'Huidige locatie'; 
   const TRAVELMETHOD = 'Reis methode';
