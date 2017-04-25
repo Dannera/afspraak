@@ -4,7 +4,7 @@ require_once('dbconfig.php');
 class APPOINTMENT
 {	
 	private $conn;
-    public $userName, $userBirthday, $userEmail, $userPhone, $userDateOfAppointment, $userTimeOfAppointment, $userMessage;
+    public $apoID, $userName, $userBirthday, $userEmail, $userPhone, $userDateOfAppointment, $userTimeOfAppointment, $userMessage;
 	
 	public function __construct()
 	{
@@ -38,10 +38,24 @@ class APPOINTMENT
 	{
 		try
 		{
-			$stmt = $this->conn->prepare("INSERT INTO appointments(session_id, user_name,user_birthday,user_email,user_phone,user_apodate,user_apotime,user_msg)
-		                                               VALUES(:session_id, :uname, :ubday, :umail, :uphone, :udatum, :utijd, :umsg)");
+			$stmt = $this->conn->prepare("INSERT INTO appointments(session_id,
+                                                                   user_name,
+                                                                   user_birthday,
+                                                                   user_email,
+                                                                   user_phone,
+                                                                   user_apodate,
+                                                                   user_apotime,
+                                                                   user_msg)
+		                                    VALUES(:user_id,
+                                                        :uname, 
+                                                        :ubday, 
+                                                        :umail, 
+                                                        :uphone, 
+                                                        :udatum, 
+                                                        :utijd, 
+                                                        :umsg)");
             
-			$stmt->bindparam(":session_id", $user_id);
+			$stmt->bindparam(":user_id", $user_id);
 			$stmt->bindparam(":uname", $uname);
 			$stmt->bindparam(":ubday", $ubday);
             $stmt->bindparam(":umail", $umail);
@@ -76,7 +90,6 @@ class APPOINTMENT
      
          while($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) 
          { 
-	         
                  $this->userName = $aRow['user_name'];
                  $this->userBirthday = $aRow['user_birthday'];
                  $this->userEmail = $aRow['user_email'];
@@ -84,10 +97,9 @@ class APPOINTMENT
                  $this->userDateOfAppointment = $aRow['user_apodate'];
                  $this->userTimeOfAppointment = $aRow['user_apotime'];
                  $this->userMessage = $aRow['user_msg'];
-             
-	     }
-         $output = array($this->userName,$this->userBirthday,$this->userEmail,$this->userPhone,$this->userDateOfAppointment,$this->userTimeOfAppointment,$this->userMessage); 
-                 
+
+                 $output = array($this->userName,$this->userBirthday,$this->userEmail,$this->userPhone,$this->userDateOfAppointment,$this->userTimeOfAppointment,$this->userMessage); 
+         }   
         
      return $stmt; 
     }
@@ -114,10 +126,10 @@ public function listAppointments($user_id)
 
          while($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) 
          { 
-             $items = $aRow['apo_id'];
+             $this->apoID = $aRow['apo_id'];
              $unames = $aRow['user_name'];
 
-	          foreach((array) $items as $item){
+	          foreach((array) $this->apoID as $item){
                   echo '<option value="' . $item . '">';
                    foreach((array) $unames as $uname){echo $uname . '</option>';}
               }  
@@ -143,10 +155,17 @@ public function listAppointments($user_id)
 		
 		try
 		{
-			$sqlUpdate = "UPDATE appointments SET user_name='$uname', user_birthday='$ubday', user_email='$umail', user_phone='$uphone', user_apodate='$udatum', user_apotime='$utijd', user_msg='$umsg'  WHERE apo_id='$apoid'";
+			$sqlUpdate = "UPDATE appointments SET user_name='$uname',
+                                                  user_birthday='$ubday', 
+                                                  user_email='$umail', 
+                                                  user_phone='$uphone', 
+                                                  user_apodate='$udatum', 
+                                                  user_apotime='$utijd', 
+                                                  user_msg='$umsg'  
+                                                  WHERE apo_id='$apoid'";
 			
 			$stmt = $this->conn->prepare($sqlUpdate);
-
+           
 			$stmt->bindparam(":uname", $uname);
 			$stmt->bindparam(":ubday", $ubday);
             $stmt->bindparam(":umail", $umail);
@@ -154,8 +173,8 @@ public function listAppointments($user_id)
             $stmt->bindparam(":udatum", $udatum);
 			$stmt->bindparam(":utijd", $utijd);
 			$stmt->bindparam(":umsg", $umsg);
-            $stmt->execute();	
-        							  		        
+            $stmt->execute();
+            				  		        
      return $stmt; 
     }
        
@@ -169,7 +188,31 @@ public function listAppointments($user_id)
           echo '</pre>'; 
        }    
     }
-   
+
+    public function deleteAppointments($apoid)
+	{
+		
+		try
+		{
+			$sqldelete = "DELETE FROM appointments WHERE apo_id = :apoid";
+			$stmt = $this->conn->prepare($sqldelete);
+
+            $stmt->bindParam(':apoid', $apoid, PDO::PARAM_INT);   
+            $stmt->execute();
+
+     return $stmt; 
+    }
+       
+       catch(PDOException $e)
+       {
+           
+          echo '<pre>'; 
+          echo 'Regel: '.$e->getLine().'<br>'; 
+          echo 'Bestand: '.$e->getFile().'<br>'; 
+          echo 'Foutmelding: '.$e->getMessage(); 
+          echo '</pre>'; 
+       }    
+    }
 }
 
 

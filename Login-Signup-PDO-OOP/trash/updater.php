@@ -89,6 +89,7 @@ if(isset($_POST['submit']))
 <?php include('links.php'); ?>
 <title>welcome - <?php print($userRow['user_name']); ?></title>
 </head>
+
 <body>
 
 <?php include('navbar.php'); ?>
@@ -97,6 +98,18 @@ if(isset($_POST['submit']))
 
    <form method="post" class="form-signin">
             <h2 class="form-signin-heading">Afspraak aanpasse:</h2><hr />
+<?php 
+	 $stmt = $user->runQuery("SELECT * FROM appointments WHERE apo_id=$apoid");
+      $stmt->execute(array(':apo_id'=>$apoid));
+      $stmt->execute();  
+     //
+     while($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) 
+    { 
+	 echo  "<p>" . $aRow['user_name']  . ": " . $aRow['user_email']  . "</p>"; 
+	}
+  ?>
+
+
             <?php
 			//error and validation messages will appear here if exists
 			if(isset($error)){ foreach($error as $error)
@@ -107,7 +120,7 @@ if(isset($_POST['submit']))
                      <?php
 				}
 			}
-			else if(isset($_GET['submit']))
+			else if(isset($_GET['joined']))
 			{
 				 ?>
 
@@ -174,3 +187,76 @@ if(isset($_POST['submit']))
 
 </body>
 </html>
+
+
+<?php
+
+require_once('class.appointments.php');
+require_once('class.user.php');
+require_once('message.php');
+
+    $userAppointment = new APPOINTMENT();
+    $user = new USER();
+
+	$user_id = $_SESSION['user_session'];
+	//get users from db
+	$stmt = $user->runQuery("SELECT * FROM users WHERE user_id=:user_id");
+	$stmt->execute(array(":user_id"=>$user_id));
+	$userRow=$stmt->fetch(PDO::FETCH_ASSOC);
+//collect user inputs
+if(isset($_POST['submit']))
+{
+	$uname  =  preg_replace('/[^A-Za-z ]/u','', strip_tags($_POST['txt_uname']));
+    $ubday  =  preg_replace('/\D/', '',strip_tags($_POST['txt_ubday']));
+	$umail  =  strip_tags($_POST['txt_umail']);
+	$uphone =  preg_replace('/[^0-9]/', '',  strip_tags($_POST['txt_uphone']));
+    $udatum =  preg_replace('/\D/', '',strip_tags($_POST['txt_udatum']));
+	$utijd  =  preg_replace('/\D/', '',strip_tags($_POST['txt_tijd']));
+	$umsg   =  strip_tags($_POST['txt_umsg']);	
+
+   //error control 
+	if($uname=="")	{
+		$error[] = MESSAGE::USERNAME_ERROR;	
+	}
+    else if($ubday=="" || ( $userAppointment->yearsMonthsBetween($ubday,date( 'Y-m-d' ))   < MESSAGE::AGE_MIN )  )	{
+		$error[] = MESSAGE::BDAY_ERROR;	}
+	else if($umail=="")	{
+		$error[] = MESSAGE::USER_EMAIL_ERROR ;	}
+	else if(!filter_var($umail, FILTER_VALIDATE_EMAIL))	{
+	    $error[] = MESSAGE::USER_EMAIL_ERROR ; }
+     else if($uphone=="" || strlen($uphone) < MESSAGE::PHONE_NUMBER_MAX_LENGTH)	{
+		$error[] = MESSAGE::USER_PHONE_ERROR; }
+     else if($udatum=="")	{
+		$error[] = MESSAGE::APO_DATE_ERROR;	}
+	else if($utijd=="")	{
+		$error[] = MESSAGE::APO_TIME_ERROR;}
+	else if($umsg==""){
+		$error[] = MESSAGE::USER_MSG_ERROR;	}
+	else
+	{
+		try
+		{
+			$stmt = $userAppointment->runQuery("SELECT * FROM appointments WHERE user_name=:uname OR user_email=:umail");
+			$stmt->execute(array(':uname'=>$uname, ':umail'=>$umail));
+			$row=$stmt->fetch(PDO::FETCH_ASSOC);
+				
+			if(strcasecmp($uname,$row['user_name']) == 0) {
+				$error[] = $uname . ', ' . message::APO_NAME_EXIST_ERROR . ", <a href='getAppointments.php'>appointment</a>";
+			}
+			else if($row['user_apodate'] == $udatum || $row['user_apotime'] == $utijd) {
+				$error[] = message::APO_EMAIL_EXIST_ERROR . ' Datum: ' . $udatum .' of Tijd: ' .$utijd . " is al geregistreerd <a href='getAppointments.php'>appointment</a>";
+			}
+			else
+			{
+				if($userAppointment->register($user_id, $uname, $ubday, $umail, $uphone, $udatum, $utijd, $umsg)){
+					$user->redirect('getAppointments.php');
+				}
+			}
+		}
+		catch(PDOException $e)
+		{
+			echo $e->getMessage();
+		}
+	}	
+}
+?>

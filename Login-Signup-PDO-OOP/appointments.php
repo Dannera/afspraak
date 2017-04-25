@@ -2,36 +2,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-<?php 		  
-//user require once
-require_once("class.user.php");
-$user = new USER();
-$user_id = $_SESSION['user_session'];
-include('links.php'); ?>
-
-<?php
-//get apponintment methods
-require_once('class.appointments.php');
-$userAppointments = new APPOINTMENT();
-$apoid = $_GET['apoid'];
-$userAppointments->selectAppointments($apoid); 
-
+<?php require_once('includes/head_inc.php');
+      $apoid = $_GET['apoid'];
 ?>
-
+<title><?php print($userRow['user_name']); ?></title>
 </head>
 <body>
-<?php include('navbar.php'); ?>
+<?php include('includes/navbar_inc.php'); ?>
 
-
-
-   <form method="post" class="form-signin">
-            <h2 class="form-signin-heading">Uw kunt hier een afspraak aanpassen:</h2><hr />
+   <form method="post" class="form-signin" action="appointments.php?apoid=<?php echo $apoid; ?>">
+            <h4 class="form-signin-heading">Uw kunt hier een afspraak aanpassen:</h4><hr />
+		     	<div class="form-group">
+			<label for="update">Bijwerken : <input type="radio" name="confirm" value="update"/></lable> <span> en of </span>
+			<label for="delete">Wissen : <input type="radio" name="confirm" value="delete"/></label>
+			</div>
       	     <div class="form-group">
 					Naam:<input type="text" name="txt_uname" class="form-control"  placeholder="uw naam" value="<?php if(isset($error)){echo $uname;} else {print($userAppointments->userName); } ?>"/>
 					</div>
 												
 			  <div class="form-group">
-					Geboortedatum:<input type="date" name="txt_ubday" class="form-control geboortedatum" formated="true" placeholder="uw geboortedatum" value="<?php if(isset($error)){echo $ubday;} else { print($userAppointments->userBirthday); }?>"/>
+					Geboortedatum:<input type="date" name="txt_ubday" class="form-control geboortedatum" formated="true" placeholder="uw geboortedatum" value="<?php if(isset($error)){ echo $ubday; } else { print($userAppointments->userBirthday); }?>"/>
 					</div>						
 												
 			   <div class="form-group">
@@ -54,13 +44,9 @@ $userAppointments->selectAppointments($apoid);
 					Uw boodschap:<textarea required name="txt_umsg" class="form-control" value="<?php if(isset($error)){echo $umsg;}?>"><?php print($userAppointments->userMessage); ?> </textarea>
 					</div>
 				<div class="form-group">
-					<button type="submit" class="btn btn-primary" name="submit">Afspraak opslan</button>
-					<button type="reset" class="btn btn-default m-l-5">Afspraak verwijderen</button>
+					<button type="submit" class="btn btn-primary" name="submit">Opslan</button>
+					<button type="delete"  class="btn btn-default m-l-5"  name="delete">Verwijderen</button>
 				</div>
 			 </form>  
    </body>
 </html>
-
-
-
- 

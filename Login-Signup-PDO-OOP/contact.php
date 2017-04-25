@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-  <?php include('links.php'); ?>
-    
+  <?php include_once('includes/links_inc.php');
+        require_once('message.php'); 
+         ?>    
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDeopjvHjhKyGZAA06SuRNIyu90N0r7GPo&sensor=false">
     </script>
 
@@ -157,8 +158,8 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
   </head>
   <body>
-<?php require_once('message.php'); ?>
-<?php include('navbar.php'); ?>
+
+<?php include('includes/navbar_inc.php'); ?>
 
   <div id="map_canvas"></div> 
     <!--<div class="canvas_btm"></div>-->

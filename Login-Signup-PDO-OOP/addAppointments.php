@@ -1,90 +1,14 @@
-<?php
-session_start();
-//require_once("session.php");
-require_once('class.appointments.php');
-require_once('class.user.php');
-require_once('message.php');
-
-    $userAppointment = new APPOINTMENT();
-    $user = new USER();
-
-	$user_id = $_SESSION['user_session'];
-	//get users from db
-	$stmt = $user->runQuery("SELECT * FROM users WHERE user_id=:user_id");
-	$stmt->execute(array(":user_id"=>$user_id));
-	
-	$userRow=$stmt->fetch(PDO::FETCH_ASSOC);
-
-//collect user inputs
-if(isset($_POST['submit']))
-{
-	$uname  =  strip_tags($_POST['txt_uname']);
-    $ubday  =  strip_tags($_POST['txt_ubday']);
-	$umail  =  strip_tags($_POST['txt_umail']);
-	$uphone =  strip_tags($_POST['txt_uphone']);
-    $udatum =  strip_tags($_POST['txt_udatum']);
-	$utijd  =  strip_tags($_POST['txt_tijd']);
-	$umsg   =  strip_tags($_POST['txt_umsg']);	
-
-   // delete this line: $test = $user->yearsMonthsBetween($ubday,date( 'Y-m-d' )); .
-
-	if($uname=="")	{
-		$error[] = MESSAGE::USERNAME_ERROR;	
-	}
-    else if($ubday=="" || ( $userAppointment->yearsMonthsBetween($ubday,date( 'Y-m-d' ))   < MESSAGE::AGE_MIN )  )	{
-		$error[] = MESSAGE::BDAY_ERROR;	}
-	else if($umail=="")	{
-		$error[] = MESSAGE::USER_EMAIL_ERROR ;	}
-	else if(!filter_var($umail, FILTER_VALIDATE_EMAIL))	{
-	    $error[] = MESSAGE::USER_EMAIL_ERROR ; }
-     else if($uphone=="" || strlen($uphone) < MESSAGE::PHONE_NUMBER_MAX_LENGTH)	{
-		$error[] = MESSAGE::USER_PHONE_ERROR; }
-     else if($udatum=="")	{
-		$error[] = MESSAGE::APO_DATE_ERROR;	}
-	else if($utijd=="")	{
-		$error[] = MESSAGE::APO_TIME_ERROR;}
-	else if($umsg==""){
-		$error[] = MESSAGE::USER_MSG_ERROR;	}
-	else
-	{
-		try
-		{
-			$stmt = $userAppointment->runQuery("SELECT user_name, user_email FROM appointments WHERE user_name=:uname OR user_email=:umail");
-			$stmt->execute(array(':uname'=>$uname, ':umail'=>$umail));
-			$row=$stmt->fetch(PDO::FETCH_ASSOC);
-				
-			if($row['user_name']==$uname) {
-				$error[] = $uname . ', ' . message::APO_NAME_EXIST_ERROR . ", <a href='appointments.php'>appointment</a>";
-			}
-			else if($row['user_email']==$umail) {
-				$error[] = message::APO_EMAIL_EXIST_ERROR . ' ' . $umail . " <a href='appointments.php'>appointment</a>";
-			}
-			else
-			{
-				if($userAppointment->register($user_id, $uname, $ubday, $umail, $uphone, $udatum, $utijd, $umsg)){
-					$user->redirect('index.php');
-				}
-			}
-		}
-		catch(PDOException $e)
-		{
-			echo $e->getMessage();
-		}
-	}	
-}
-
-//          ==/ THE-END /==  
-?>
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html>
 <head>
-<?php include('links.php'); ?>
-<title>Afspraak Maken</title>
-
+<?php include_once('includes/links_inc.php'); ?>
+<?php require_once('includes/head_inc.php');?>
+<title><?php print($userRow['user_name']); ?></title>
 </head>
 <body>
 
-<?php include('navbar.php'); ?> 
+<?php include_once('includes/navbar_inc.php'); ?> 
 
 <div class="signin-form">
 
@@ -109,7 +33,7 @@ if(isset($_POST['submit']))
 			{
 				 ?>
                  <div class="alert alert-info">
-                      <i class="glyphicon glyphicon-log-in"></i> &nbsp; Successfully registered <a href='index.php'>login</a> here
+                      <i class="glyphicon glyphicon-log-in"></i> &nbsp; Successfully registered <a href='getAppointments.php'>Appointments</a> here
                  </div>
                  <?php
 			}

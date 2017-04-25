@@ -17,14 +17,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<?php include('links.php'); ?>
+<?php include('includes/links_inc.php'); ?>
 <title>welcome - <?php print($userRow['user_email']); ?></title>
 </head>
 
 <body>
 
 
-<?php include('navbar.php'); ?>
+<?php include('includes/navbar_inc.php'); ?>
 
 	<div class="clearfix"></div>
 	
@@ -49,16 +49,8 @@
            <td><i>Edit</i></td>
            </tr>
            </table>
-       
-
-  
-    
     </div>
-
 </div>
-
-
-
 
 <script src="bootstrap/js/bootstrap.min.js"></script>
 
