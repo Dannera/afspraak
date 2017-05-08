@@ -10,7 +10,7 @@ if($login->is_loggedin()!="")
 
 if(isset($_POST['btn-login']))
 {
-	$uname = strip_tags($_POST['txt_uname_email']);
+	$uname = preg_replace('/[^A-Za-z ]/u','', strip_tags($_POST['txt_uname_email']));
 	$umail = strip_tags($_POST['txt_uname_email']);
 	$upass = strip_tags($_POST['txt_password']);
 		
@@ -27,8 +27,8 @@ if(isset($_POST['btn-login']))
 <!DOCTYPE html>
 <html>
   <head>
-<?php include('links.php'); ?>
-<title>Coding Cage : Login</title>
+  <?php include_once('includes/links_inc.php'); ?>
+<title>Login</title>
 </head>
 <body>
 
@@ -36,7 +36,7 @@ if(isset($_POST['btn-login']))
 	<div class="container">
        <form class="form-signin" method="post" id="login-form">
       
-        <h2 class="form-signin-heading">Log In to WebApp.</h2><hr />
+        <h2 class="form-signin-heading">WebApp Login.</h2><hr />
         
         <div id="error">
         <?php
@@ -64,11 +64,11 @@ if(isset($_POST['btn-login']))
         
         <div class="form-group">
             <button type="submit" name="btn-login" class="btn btn-default">
-                	<i class="glyphicon glyphicon-log-in"></i> &nbsp; SIGN IN
+                	<i class="glyphicon glyphicon-log-in"></i> &nbsp; Inloggen
             </button>
         </div>  
       	<br />
-            <label>Don't have account yet ! <a href="sign-up.php">Sign Up</a></label>
+            <label>Maak een account ! <a href="sign-up.php">Aanmelden</a></label>
       </form>
 
     </div>

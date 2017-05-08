@@ -10,9 +10,9 @@ if($user->is_loggedin()!="")
 
 if(isset($_POST['btn-signup']))
 {
-	$uname = strip_tags($_POST['txt_uname']);
+	$uname = preg_replace('/[^A-Za-z ]/u','', strip_tags($_POST['txt_uname']));
 	$umail = strip_tags($_POST['txt_umail']);
-	$uage = strip_tags($_POST['txt_uage']);
+	$uage = preg_replace('/\D/', '', strip_tags($_POST['txt_uage']));
 	$upass = strip_tags($_POST['txt_upass']);	
 	
 	if($uname=="")	{
@@ -65,8 +65,8 @@ if(isset($_POST['btn-signup']))
 <!DOCTYPE html>
 <html>
 <head>
-<?php include('links.php'); ?>
-<title>Sign up</title>
+<title>Aanmelden</title>
+  <?php include_once('includes/links_inc.php'); ?>
 </head>
 <body>
 
@@ -75,7 +75,7 @@ if(isset($_POST['btn-signup']))
 <div class="container">
     	
         <form method="post" class="form-signin">
-            <h2 class="form-signin-heading">Sign up.</h2><hr />
+            <h2 class="form-signin-heading">Aanmelden.</h2><hr />
             <?php
 			if(isset($error))
 			{
@@ -92,7 +92,7 @@ if(isset($_POST['btn-signup']))
 			{
 				 ?>
                  <div class="alert alert-info">
-                      <i class="glyphicon glyphicon-log-in"></i> &nbsp; Successfully registered <a href='index.php'>login</a> here
+                      <i class="glyphicon glyphicon-log-in"></i> &nbsp; Uw bent Successfully registered <a href='index.php'>Inloggen</a> hier
                  </div>
                  <?php
 			}
@@ -112,11 +112,11 @@ if(isset($_POST['btn-signup']))
             <div class="clearfix"></div><hr />
             <div class="form-group">
             	<button type="submit" class="btn btn-primary" name="btn-signup">
-                	<i class="glyphicon glyphicon-open-file"></i>&nbsp;SIGN UP
+                	<i class="glyphicon glyphicon-open-file"></i>&nbsp;Aanmelden
                 </button>
             </div>
             <br />
-            <label>have an account ! <a href="index.php">Sign In</a></label>
+            <label>Ik heb al een account ! <a href="index.php">Inloggen</a></label>
         </form>
        </div>
 </div>

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-  <?php include_once('includes/links_inc.php');
-        require_once('message.php'); 
-         ?>    
+<?php 
+include_once('includes/links_inc.php'); 
+require_once('includes/head_inc.php');
+ ?>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDeopjvHjhKyGZAA06SuRNIyu90N0r7GPo&sensor=false">
     </script>
 
@@ -166,21 +167,21 @@ google.maps.event.addDomListener(window, 'load', initialize);
    
 <form role="form"><div class="col-lg-6">
 <div class="form-group">
-     <label for="InputName"><?php echo Message::LOCATION . ":"; ?></label>
+     <label for="InputName"><?php echo LOCATION . ":"; ?></label>
      <input type="text" class="form-control" name="start"  id="start" placeholder="Enter your adres/city"  value=""  onchange="calcRoute()" />
       </div></div>
   <!--    <form role="form"></form> -->
 
 <div class="col-lg-6">
 <div class="form-group">
-<label for="InputName"><?php echo Message::TRAVELMETHOD . ":"; ?></label>   
+<label for="InputName"><?php echo TRAVELMETHOD . ":"; ?></label>   
 <select class="form-control" id="mode" onchange="calcRoute()">
-<?php echo  Message::travelOptions(); ?>
+<?php echo  travelOptions(); ?>
 </select>
 </div></div>
 
  <div>
-        <strong><?php echo Message::CALC_TRAVELMETHOD_MSG . ":"; ?>:</strong>
+        <strong><?php echo CALC_TRAVELMETHOD_MSG . ":"; ?>:</strong>
       </div>
       <div id="output">
       </div>

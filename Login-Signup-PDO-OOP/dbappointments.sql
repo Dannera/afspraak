@@ -21,7 +21,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `appointments` (
-  `apo_id` int(11) NOT NULL,
+  `apo_id`  int(11) NOT NULL AUTO_INCREMENT,
   `session_id` int(11) NOT NULL,
   `user_name` varchar(15) NOT NULL,
   `user_birthday` date DEFAULT NULL,
@@ -30,8 +30,9 @@ CREATE TABLE `appointments` (
   `user_apodate` date NOT NULL,
   `user_apotime` time DEFAULT NULL,
   `user_msg` varchar(255) NOT NULL,
-  `joining_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `joining_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`apo_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Indexes for dumped tables

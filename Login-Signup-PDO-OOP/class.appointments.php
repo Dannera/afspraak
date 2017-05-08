@@ -34,7 +34,7 @@ class APPOINTMENT
         }
 
 	
-	public function register($user_id, $uname, $ubday, $umail, $uphone, $udatum, $utijd, $umsg)
+	public function register($user_id, $userName,$userBirthday,$userEmail,$userPhone,$userDateOfAppointment,$userTimeOfAppointment,$userMessage)
 	{
 		try
 		{
@@ -47,22 +47,22 @@ class APPOINTMENT
                                                                    user_apotime,
                                                                    user_msg)
 		                                    VALUES(:user_id,
-                                                        :uname, 
-                                                        :ubday, 
-                                                        :umail, 
-                                                        :uphone, 
-                                                        :udatum, 
-                                                        :utijd, 
-                                                        :umsg)");
+                                                        :userName, 
+                                                        :userBirthday, 
+                                                        :userEmail, 
+                                                        :userPhone, 
+                                                        :userDateOfAppointment, 
+                                                        :userTimeOfAppointment, 
+                                                        :userMessage)");
             
 			$stmt->bindparam(":user_id", $user_id);
-			$stmt->bindparam(":uname", $uname);
-			$stmt->bindparam(":ubday", $ubday);
-            $stmt->bindparam(":umail", $umail);
-            $stmt->bindparam(":uphone", $uphone);
-            $stmt->bindparam(":udatum", $udatum);
-			$stmt->bindparam(":utijd", $utijd);
-			$stmt->bindparam(":umsg", $umsg);
+			$stmt->bindparam(":userName", $userName);
+			$stmt->bindparam(":userBirthday", $userBirthday);
+            $stmt->bindparam(":userEmail", $userEmail);
+            $stmt->bindparam(":userPhone", $userPhone);
+            $stmt->bindparam(":userDateOfAppointment", $userDateOfAppointment);
+			$stmt->bindparam(":userTimeOfAppointment", $userTimeOfAppointment);
+			$stmt->bindparam(":userMessage", $userMessage);
             $stmt->execute();	
 				  		        
      return $stmt; 
@@ -150,29 +150,29 @@ public function listAppointments($user_id)
     }
 	
 
-	public function updateAppointments($apoid, $uname, $ubday, $umail, $uphone,  $udatum, $utijd, $umsg)
+	public function updateAppointments($apoid, $userName,$userBirthday,$userEmail,$userPhone,$userDateOfAppointment,$userTimeOfAppointment,$userMessage)
 	{
 		
 		try
 		{
-			$sqlUpdate = "UPDATE appointments SET user_name='$uname',
-                                                  user_birthday='$ubday', 
-                                                  user_email='$umail', 
-                                                  user_phone='$uphone', 
-                                                  user_apodate='$udatum', 
-                                                  user_apotime='$utijd', 
-                                                  user_msg='$umsg'  
+			$sqlUpdate = "UPDATE appointments SET user_name='$userName',
+                                                  user_birthday='$userBirthday', 
+                                                  user_email='$userEmail', 
+                                                  user_phone='$userPhone', 
+                                                  user_apodate='$userDateOfAppointment', 
+                                                  user_apotime='$userTimeOfAppointment', 
+                                                  user_msg='$userMessage'  
                                                   WHERE apo_id='$apoid'";
 			
 			$stmt = $this->conn->prepare($sqlUpdate);
            
-			$stmt->bindparam(":uname", $uname);
-			$stmt->bindparam(":ubday", $ubday);
-            $stmt->bindparam(":umail", $umail);
-            $stmt->bindparam(":uphone", $uphone);
-            $stmt->bindparam(":udatum", $udatum);
-			$stmt->bindparam(":utijd", $utijd);
-			$stmt->bindparam(":umsg", $umsg);
+			$stmt->bindparam(":userName", $userName);
+			$stmt->bindparam(":userBirthday", $userBirthday);
+            $stmt->bindparam(":userEmail", $userEmail);
+            $stmt->bindparam(":userPhone", $userPhone);
+            $stmt->bindparam(":userDateOfAppointment", $userDateOfAppointment);
+			$stmt->bindparam(":userTimeOfAppointment", $userTimeOfAppointment);
+			$stmt->bindparam(":userMessage", $userMessage);
             $stmt->execute();
             				  		        
      return $stmt; 
