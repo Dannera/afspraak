@@ -17,7 +17,6 @@ require_once('includes/head_inc.php');
       var map;
       var renkum = {lat: 51.982983, lng: 5.739978};
 
-
     //Initializer
       function initialize() {
        directionsDisplay = new google.maps.DirectionsRenderer();
